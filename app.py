@@ -28,9 +28,11 @@ st.set_page_config(page_title="Trakt to Emby Sync", page_icon="🎬")
 if hasattr(st, 'secrets') and 'github' in st.secrets:
     client_id = st.secrets.github.client_id
     client_secret = st.secrets.github.client_secret
+    redirect_uri = st.secrets.github.redirect_uri if 'redirect_uri' in st.secrets.github else "http://localhost:8501/"
 else:
     client_id = os.getenv('GITHUB_CLIENT_ID')
     client_secret = os.getenv('GITHUB_CLIENT_SECRET')
+    redirect_uri = os.getenv('GITHUB_REDIRECT_URI', "http://localhost:8501/")
 
 # Initialize OAuth component
 oauth = OAuth2Component(
@@ -39,8 +41,7 @@ oauth = OAuth2Component(
     authorize_endpoint="https://github.com/login/oauth/authorize",
     token_endpoint="https://github.com/login/oauth/access_token",
     refresh_token_endpoint="https://github.com/login/oauth/access_token",
-    revoke_token_endpoint="https://github.com/settings/connections/applications/",
-    scope="read:user"
+    revoke_token_endpoint="https://github.com/settings/connections/applications/"
 )
 
 # Check if user is authenticated
@@ -67,7 +68,12 @@ if not st.session_state.github_token:
     st.write("Please sign in with GitHub to continue")
     
     # GitHub login button
-    result = oauth.authorize_button("Sign in with GitHub", key="github_login")
+    result = oauth.authorize_button(
+        "Sign in with GitHub",
+        key="github_login",
+        redirect_uri=redirect_uri,
+        scope="read:user"
+    )
     
     if result and 'token' in result:
         st.session_state.github_token = result['token']
