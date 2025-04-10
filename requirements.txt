@@ -3,5 +3,5 @@ python-dotenv==1.0.1
 requests==2.31.0
 APScheduler==3.10.4
 trakt.py==4.4.0
-streamlit-oauth==0.1.2
+streamlit-oauth==0.1.14
 watchdog==3.0.0
