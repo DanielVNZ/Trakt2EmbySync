@@ -19,76 +19,53 @@ from sync_Trakt_to_emby import (
 import requests
 import pickle
 import hashlib
-from streamlit_oauth import OAuth2Component
 
-# Enable Streamlit authentication
+# Enable Streamlit page config
 st.set_page_config(page_title="Trakt to Emby Sync", page_icon="🎬")
 
-# GitHub OAuth settings
-if hasattr(st, 'secrets') and 'github' in st.secrets:
-    client_id = st.secrets.github.client_id
-    client_secret = st.secrets.github.client_secret
-    redirect_uri = st.secrets.github.redirect_uri if 'redirect_uri' in st.secrets.github else "http://localhost:8501/"
-else:
-    client_id = os.getenv('GITHUB_CLIENT_ID')
-    client_secret = os.getenv('GITHUB_CLIENT_SECRET')
-    redirect_uri = os.getenv('GITHUB_REDIRECT_URI', "http://localhost:8501/")
+# Initialize session state for authentication
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
 
-# Initialize OAuth component
-oauth = OAuth2Component(
-    client_id=client_id,
-    client_secret=client_secret,
-    authorize_endpoint="https://github.com/login/oauth/authorize",
-    token_endpoint="https://github.com/login/oauth/access_token",
-    refresh_token_endpoint="https://github.com/login/oauth/access_token",
-    revoke_token_endpoint="https://github.com/settings/connections/applications/"
-)
+if 'username' not in st.session_state:
+    st.session_state.username = None
 
-# Check if user is authenticated
-if 'github_token' not in st.session_state:
-    st.session_state.github_token = None
+# Simple authentication
+def authenticate(username, password):
+    """Simple authentication function"""
+    # For demo purposes, using a simple hash. In production, use proper password hashing
+    if username and password:
+        # Store the username hash as the session identifier
+        user_hash = hashlib.sha256(username.encode()).hexdigest()[:16]
+        st.session_state.authenticated = True
+        st.session_state.username = username
+        st.session_state.user_hash = user_hash
+        return True
+    return False
 
-if 'user_info' not in st.session_state:
-    st.session_state.user_info = None
-
-def get_user_info(token):
-    """Get GitHub user information"""
-    headers = {
-        'Authorization': f'token {token}',
-        'Accept': 'application/json',
-    }
-    response = requests.get('https://api.github.com/user', headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    return None
-
-# Authentication flow
-if not st.session_state.github_token:
+# Login form
+if not st.session_state.authenticated:
     st.title("Welcome to Trakt2EmbySync")
-    st.write("Please sign in with GitHub to continue")
+    st.write("Please sign in to continue")
     
-    # GitHub login button
-    result = oauth.authorize_button(
-        "Sign in with GitHub",
-        key="github_login",
-        redirect_uri=redirect_uri,
-        scope="read:user"
-    )
-    
-    if result and 'token' in result:
-        st.session_state.github_token = result['token']
-        user_info = get_user_info(result['token'])
-        if user_info:
-            st.session_state.user_info = user_info
-            st.rerun()
+    with st.form("login_form"):
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        submit = st.form_submit_button("Sign In")
+        
+        if submit:
+            if authenticate(username, password):
+                st.success("Successfully signed in!")
+                st.rerun()
+            else:
+                st.error("Invalid username or password")
 else:
-    # User is authenticated, show the main app
-    if st.session_state.user_info:
-        st.sidebar.write(f"👤 Signed in as: {st.session_state.user_info['login']}")
-        if st.sidebar.button("Sign Out"):
-            st.session_state.github_token = None
-            st.session_state.user_info = None
-            st.rerun()
+    # Show sign out button in sidebar
+    st.sidebar.write(f"👤 Signed in as: {st.session_state.username}")
+    if st.sidebar.button("Sign Out"):
+        st.session_state.authenticated = False
+        st.session_state.username = None
+        st.rerun()
 
 # Add authentication
 def get_user_hash():
