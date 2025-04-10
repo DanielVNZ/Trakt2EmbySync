@@ -5,3 +5,4 @@ APScheduler==3.10.4
 trakt.py==4.4.0
 streamlit-oauth==0.1.14
 watchdog==3.0.0
+schedule==1.2.1
