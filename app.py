@@ -23,58 +23,26 @@ import hashlib
 # Enable Streamlit page config
 st.set_page_config(page_title="Trakt to Emby Sync", page_icon="🎬")
 
-# Initialize session state for authentication
-if 'authenticated' not in st.session_state:
-    st.session_state.authenticated = False
-
-if 'username' not in st.session_state:
-    st.session_state.username = None
-
-# Simple authentication
-def authenticate(username, password):
-    """Simple authentication function"""
-    # For demo purposes, using a simple hash. In production, use proper password hashing
-    if username and password:
-        # Store the username hash as the session identifier
-        user_hash = hashlib.sha256(username.encode()).hexdigest()[:16]
-        st.session_state.authenticated = True
-        st.session_state.username = username
-        st.session_state.user_hash = user_hash
-        return True
-    return False
-
-# Login form
-if not st.session_state.authenticated:
+# Authentication check
+if not st.experimental_user.is_logged_in:
     st.title("Welcome to Trakt2EmbySync")
-    st.write("Please sign in to continue")
-    
-    with st.form("login_form"):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        submit = st.form_submit_button("Sign In")
-        
-        if submit:
-            if authenticate(username, password):
-                st.success("Successfully signed in!")
-                st.rerun()
-            else:
-                st.error("Invalid username or password")
+    st.write("Please sign in with GitHub to continue")
+    st.login("github")
 else:
     # Show sign out button in sidebar
-    st.sidebar.write(f"👤 Signed in as: {st.session_state.username}")
+    st.sidebar.write(f"👤 Signed in as: {st.experimental_user.name}")
     if st.sidebar.button("Sign Out"):
-        st.session_state.authenticated = False
-        st.session_state.username = None
-        st.rerun()
+        st.logout()
+
+    # Main app content
+    st.title("Trakt to Emby Sync")
+    
+    # Get user-specific hash for storing configurations
+    def get_user_hash():
+        """Get a unique hash for the current user"""
+        return hashlib.sha256(st.experimental_user.email.encode()).hexdigest()[:16]
 
 # Add authentication
-def get_user_hash():
-    """Get a unique hash for the current user"""
-    if not st.session_state.get("user_hash"):
-        # Create a random session ID if not exists
-        st.session_state.user_hash = hashlib.sha256(str(time.time()).encode()).hexdigest()[:16]
-    return st.session_state.user_hash
-
 def get_user_config_path():
     """Get the path to the user's configuration file"""
     user_hash = get_user_hash()
