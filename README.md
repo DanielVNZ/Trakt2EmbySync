@@ -27,21 +27,11 @@ A simple application to synchronize your Trakt.tv lists with your Emby collectio
    - If you see an error or the window closes immediately, try right-clicking and select "Run as administrator"
 4. Follow the instructions in the web interface
 
-### Mac/Linux Users
-
-1. Download this project as a ZIP file
-2. Extract all files to a folder
-3. Open Terminal in the extracted folder
-4. Run `chmod +x setup.sh` to make the script executable
-5. Run `./setup.sh`
-6. Follow the instructions in the web interface
-
 ## Starting the Application (After Setup)
 
 After you've completed the setup once, you can use the simpler run scripts to start the app:
 
 - Windows: Double-click `run.bat`
-- Mac/Linux: Run `./run.sh` in Terminal
 
 ## Manual Setup
 
@@ -54,6 +44,7 @@ If the one-click setup doesn't work for you:
    - Mac/Linux: `source .venv/bin/activate`
 4. Install requirements: `pip install -r requirements.txt`
 5. Run the app: `streamlit run app.py`
+6. To run the scheduler `python console_runner.py`
 
 ## Configuration
 
