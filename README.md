@@ -27,6 +27,8 @@ A simple application to synchronize your Trakt.tv lists with your Emby collectio
    - If you see an error or the window closes immediately, try right-clicking and select "Run as administrator"
 4. Follow the instructions in the web interface
 
+   NOTE: there is a bug currrently, once installed and you have set everything up restart the application.
+
 ## Starting the Application (After Setup)
 
 After you've completed the setup once, you can use the simpler run scripts to start the app:
