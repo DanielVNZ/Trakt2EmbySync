@@ -95,3 +95,7 @@ MIT License - Feel free to use, modify, and distribute this code.
 ## Support
 
 If you encounter any issues, please submit them on GitHub.
+
+## Credits
+
+Created by DanielVNZ w/ ChatGPT & Claude lol
