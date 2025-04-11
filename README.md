@@ -1,6 +1,9 @@
 # Trakt2EmbySync
 
 A simple application to synchronize your Trakt.tv lists with your Emby collections.
+<p>
+  <br> </br>
+</p>
 
 <p align="center">
   <img src="images/image1.png" alt="Screenshot 1" width="45%"/>
