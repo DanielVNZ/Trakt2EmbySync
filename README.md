@@ -2,6 +2,11 @@
 
 A simple application to synchronize your Trakt.tv lists with your Emby collections.
 
+<p align="center">
+  <img src="images/image1.png" alt="Screenshot 1" width="45%"/>
+  <img src="images/image2.png" alt="Screenshot 2" width="45%"/>
+</p>
+
 ## Features
 
 - Connect to your Trakt.tv account via OAuth to access your lists
