@@ -8,6 +8,9 @@ A Streamlit application that synchronizes your Trakt.tv lists with Emby collecti
 - Support for both movies and TV shows
 - User-friendly web interface
 - Persistent configuration storage
+- Missing Item Management
+- Ignoring Item Management
+- Custom Libraries
 
 ## Setup
 
